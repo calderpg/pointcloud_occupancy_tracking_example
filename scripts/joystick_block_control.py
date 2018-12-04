@@ -10,8 +10,10 @@ class JoystickBlockControl(object):
         rospy.init_node("joystick_block_control")
         self.last_joystick_state = None
         self.last_control_mode = None
-        self.joystick_sub = rospy.Subscriber("/joy", Joy, self.joystick_cb, queue_size=1)
-        self.thruster_pub = rospy.Publisher("/flying_box/thruster/command", WrenchStamped, queue_size=1)
+        self.joystick_sub = rospy.Subscriber("/joy", Joy, self.joystick_cb,
+                                             queue_size=1)
+        self.thruster_pub = rospy.Publisher("/flying_box/thruster/command",
+                                            WrenchStamped, queue_size=1)
         rate = rospy.Rate(100.0)
         while not rospy.is_shutdown():
             if self.last_joystick_state is not None:

@@ -82,3 +82,24 @@ add_executable(pointcloud_aggregator_node
 add_dependencies(pointcloud_aggregator_node ${catkin_EXPORTED_TARGETS}
                  ${PROJECT_NAME}_gencpp)
 target_link_libraries(pointcloud_aggregator_node ${catkin_LIBRARIES})
+
+# Install C++ nodes
+install(TARGETS pointcloud_aggregator_node pointcloud_occupancy_tracking_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+# Install Python node
+catkin_install_python(PROGRAMS scripts/joystick_block_control.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# Mark launch files for installation
+install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+    PATTERN ".svn" EXCLUDE)
+
+## Mark config files for installation
+install(DIRECTORY config/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+    PATTERN ".svn" EXCLUDE)
