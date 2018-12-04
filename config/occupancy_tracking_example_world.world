@@ -1,0 +1,682 @@
+<?xml version="1.0"?> 
+<sdf version="1.5">
+  <world name="default">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- Hole environment -->
+    <model name="hole_environment">
+      <static>true</static>
+      <link name="environment">
+        <collision name="leftwall_collision">
+          <pose>0.0 1.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.01 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="leftwall_visual">
+          <pose>0.0 1.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.01 2.0</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+
+        <collision name="rightwall_collision">
+          <pose>0.0 -1.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.01 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="rightwall_visual">
+          <pose>0.0 -1.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 0.01 2.0</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+
+        <collision name="frontwall_collision">
+          <pose>1.0 0.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 2.0 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="frontwall_visual">
+          <pose>1.0 0.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 2.0 2.0</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+
+        <collision name="backwall_collision">
+          <pose>-1.0 0.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 2.0 2.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="backwall_visual">
+          <pose>-1.0 0.0 1.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 2.0 2.0</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+
+        <collision name="topwall_collision">
+          <pose>0.0 0.0 2.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 2.0 0.01</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="topwall_visual">
+          <pose>0.0 0.0 2.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 2.0 0.01</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+
+        <collision name="bottomwall_collision">
+          <pose>0.0 0.0 0.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 2.0 0.01</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="bottomwall_visual">
+          <pose>0.0 0.0 0.0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>2.0 2.0 0.01</size>
+            </box>
+          </geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.25 0.25 0.25 1.0</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <!-- Ring of depth cameras -->
+    <model name="cam1">
+      <static>true</static>
+      <pose>-1.0 -1.0 0.0 0 -0.785398 0.785398</pose>
+      <link name="cam1_link">
+        <collision name="cam1_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam1_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam1_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam1_ir</cameraName>
+            <imageTopicName>/cam1/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam1/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam1/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam1/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam1/depth/points</pointCloudTopicName>
+            <frameName>cam1_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam2">
+      <static>true</static>
+      <pose>-1.0 1.0 0.0 0 -0.785398 -0.785398</pose>
+      <link name="cam2_link">
+        <collision name="cam2_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam2_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam2_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam2_ir</cameraName>
+            <imageTopicName>/cam2/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam2/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam2/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam2/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam2/depth/points</pointCloudTopicName>
+            <frameName>cam2_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam3">
+      <static>true</static>
+      <pose>1.0 -1.0 0.0 0 -0.785398 2.35619</pose>
+      <link name="cam3_link">
+        <collision name="cam3_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam3_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam3_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam3_ir</cameraName>
+            <imageTopicName>/cam3/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam3/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam3/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam3/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam3/depth/points</pointCloudTopicName>
+            <frameName>cam3_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam4">
+      <static>true</static>
+      <pose>1.0 1.0 0.0 0 -0.785398 -2.35619</pose>
+      <link name="cam4_link">
+        <collision name="cam4_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam4_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam4_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam4_ir</cameraName>
+            <imageTopicName>/cam4/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam4/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam4/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam4/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam4/depth/points</pointCloudTopicName>
+            <frameName>cam4_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam5">
+      <static>true</static>
+      <pose>-1.0 -1.0 2.0 0 0.785398 0.785398</pose>
+      <link name="cam5_link">
+        <collision name="cam5_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam5_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam5_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam5_ir</cameraName>
+            <imageTopicName>/cam5/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam5/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam5/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam5/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam5/depth/points</pointCloudTopicName>
+            <frameName>cam5_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam6">
+      <static>true</static>
+      <pose>-1.0 1.0 2.0 0 0.785398 -0.785398</pose>
+      <link name="cam6_link">
+        <collision name="cam6_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam6_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam6_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam6_ir</cameraName>
+            <imageTopicName>/cam6/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam6/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam6/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam6/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam6/depth/points</pointCloudTopicName>
+            <frameName>cam6_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam7">
+      <static>true</static>
+      <pose>1.0 -1.0 2.0 0 0.785398 2.35619</pose>
+      <link name="cam7_link">
+        <collision name="cam7_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam7_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam7_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam7_ir</cameraName>
+            <imageTopicName>/cam7/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam7/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam7/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam7/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam7/depth/points</pointCloudTopicName>
+            <frameName>cam7_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <model name="cam8">
+      <static>true</static>
+      <pose>1.0 1.0 2.0 0 0.785398 -2.35619</pose>
+      <link name="cam8_link">
+        <collision name="cam8_collision">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="cam8_visual">
+          <geometry>
+            <box>
+              <size>0.05 0.1 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.0 0.5 1.0</ambient>
+          </material>
+        </visual>
+        <sensor name="cam8_camera" type="depth">
+          <update_rate>10</update_rate>
+          <camera>
+            <horizontal_fov>1.047198</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>5</far>
+            </clip>
+          </camera>
+          <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <!-- Keep this zero, update_rate in the parent <sensor> tag
+              will control the frame rate. -->
+            <updateRate>0.0</updateRate>
+            <cameraName>cam8_ir</cameraName>
+            <imageTopicName>/cam8/depth/image_raw</imageTopicName>
+            <cameraInfoTopicName>/cam8/depth/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>/cam8/depth/image_raw</depthImageTopicName>
+            <depthImageInfoTopicName>/cam8/depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>/cam8/depth/points</pointCloudTopicName>
+            <frameName>cam8_link</frameName>
+            <pointCloudCutoff>0.05</pointCloudCutoff>
+            <distortionK1>0</distortionK1>
+            <distortionK2>0</distortionK2>
+            <distortionK3>0</distortionK3>
+            <distortionT1>0</distortionT1>
+            <distortionT2>0</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+    <!-- Simple flying box  -->
+    <model name="flying_box">
+      <pose>0 0 1.0 0 0 0</pose>
+      <link name="flying_box">
+        <inertial>
+          <mass>10.0</mass>
+        </inertial>
+        <gravity>0</gravity>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 0.0 0.25 1.0</ambient>
+          </material>
+        </visual>
+      </link>
+      <!-- Plugins that describe the thrusters -->
+      <plugin name="generic_gazebo_wrench_thruster_plugin" filename="libgeneric_gazebo_wrench_thruster_plugin.so">
+        <thruster_body>flying_box</thruster_body>
+        <thruster_name>thruster</thruster_name>
+      </plugin>
+      <plugin name="flying_box_position" filename="libgazebo_ros_p3d.so">
+        <frameName>world</frameName>
+        <bodyName>flying_box</bodyName>
+        <topicName>flying_box/pose</topicName>
+        <updateRate>200.0</updateRate>
+      </plugin>
+    </model>
+  </world>
+</sdf>
