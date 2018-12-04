@@ -1,15 +1,15 @@
 # pointcloud_occupancy_tracking_example
-ROS example using pointcloud voxelization in [voxelized_geometry_tools](github.com/calderpg/voxelized_geometry_tools) for occupancy tracking from pointclouds.
+ROS example using pointcloud voxelization in [voxelized_geometry_tools](http://github.com/calderpg/voxelized_geometry_tools) for occupancy tracking from pointclouds.
 
 ## Dependencies
 
-- [ROS Kinetic or ROS Melodic](ros.org) ROS Melodic on Ubuntu Bionic (18.04) is prefered. Gazebo simulator and ROS plugins are required, these are installed as part of `ros-<version>-desktop-full`.
+- [ROS Kinetic or ROS Melodic](http://ros.org) ROS Melodic on Ubuntu Bionic (18.04) is prefered. Gazebo simulator and ROS plugins are required, these are installed as part of `ros-<version>-desktop-full`.
 
-- [common_robotics_utilities](github.com/calderpg/common_robotics_utilities)
+- [common_robotics_utilities](http://github.com/calderpg/common_robotics_utilities)
 
-- [voxelized_geometry_tools](github.com/calderpg/voxelized_geometry_tools)
+- [voxelized_geometry_tools](http://github.com/calderpg/voxelized_geometry_tools)
 
-- [generic_gazebo_thruster_plugins](github.com/calderpg/generic_gazebo_thruster_plugins)
+- [generic_gazebo_thruster_plugins](http://github.com/calderpg/generic_gazebo_thruster_plugins)
 
 ## Optional Dependencies
 
@@ -101,8 +101,14 @@ rosrun pointcloud_occupancy_tracking_example pointcloud_occupancy_tracking_node
 See the node source for more details on node parameters, including which voxelizer to use, how to filter the voxelized occupancy grid, and how large (and where) to track occupancy.
 
 5. Open RViz
+```
+rviz
+```
 
+Load the provided RViz config file
+```
 File->Open Config->Select /path/to/your/catkin/workspace/src/pointcloud_occupancy_tracking_example/config/occupancy_tracking.rviz
+```
 
 6. (Optional) Start joystick
 
