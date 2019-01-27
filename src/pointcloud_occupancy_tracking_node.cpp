@@ -128,6 +128,7 @@ public:
       const std::string& parent_frame_name, const double step_size_multiplier,
       const PointCloudVoxelizationFilterOptions& filter_options,
       const VoxelizerOptions voxelizer_option,
+      const std::map<std::string, int32_t>& options,
       const std::string& pointclouds_topic,
       const std::string& occupancy_display_topic)
       : nh_(nh), step_size_multiplier_(step_size_multiplier),
@@ -137,7 +138,7 @@ public:
     static_environment_ = voxelized_geometry_tools::CollisionMap(
         grid_origin_transform, parent_frame_name, grid_sizes, default_cell);
     voxelizer_ = voxelized_geometry_tools::pointcloud_voxelization
-                     ::MakePointCloudVoxelizer(voxelizer_option);
+                     ::MakePointCloudVoxelizer(voxelizer_option, options);
     display_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(
                        occupancy_display_topic, 1, false);
     pointclouds_sub_ =
@@ -262,6 +263,12 @@ int main(int argc, char** argv)
                     "[%s] is not a valid voxelizer option",
                     raw_voxelizer_option.c_str());
   }
+  std::map<std::string, int32_t> options;
+  options["CUDA_DEVICE"] = nhp.param(std::string("cuda_device"), 0);
+  options["OPENCL_PLATFORM_INDEX"] =
+      nhp.param(std::string("opencl_platform_index"), 0);
+  options["OPENCL_DEVICE_INDEX"] =
+      nhp.param(std::string("opencl_device_index"), 0);
   // Make grid sizes
   const double grid_resolution =
       nhp.param(std::string("grid_resolution"), 0.04);
@@ -290,8 +297,8 @@ int main(int argc, char** argv)
   // Start
   OccupancyTracker tracker(
       nh, grid_sizes, grid_origin_transform, parent_frame_name,
-      step_size_multiplier, filter_options, voxelizer_option, pointclouds_topic,
-      occupancy_display_topic);
+      step_size_multiplier, filter_options, voxelizer_option, options,
+      pointclouds_topic, occupancy_display_topic);
   tracker.Loop(loop_rate);
   return 0;
 }
