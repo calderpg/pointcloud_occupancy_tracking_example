@@ -7,7 +7,6 @@
 #include <common_robotics_utilities/color_builder.hpp>
 #include <common_robotics_utilities/math.hpp>
 #include <ros/ros.h>
-#include <pointcloud_occupancy_tracking_example/MultiPointCloud2.h>
 #include <pointcloud_occupancy_tracking_example/pointcloud2_wrapper.hpp>
 #include <sensor_msgs/PointCloud2.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -32,25 +31,25 @@ public:
       const ros::NodeHandle& nh,
       const common_robotics_utilities::voxel_grid::GridSizes& grid_sizes,
       const Eigen::Isometry3d& grid_origin_transform,
-      const std::string& parent_frame_name, const double step_size_multiplier,
+      const double step_size_multiplier,
       const PointCloudVoxelizationFilterOptions& filter_options,
       const VoxelizerOptions voxelizer_option,
       const std::map<std::string, int32_t>& options,
-      const std::string& pointclouds_topic,
+      const std::string& pointcloud_topic,
       const std::string& occupancy_display_topic)
       : nh_(nh), step_size_multiplier_(step_size_multiplier),
         filter_options_(filter_options)
   {
     const voxelized_geometry_tools::CollisionCell default_cell(0.0f);
     static_environment_ = voxelized_geometry_tools::CollisionMap(
-        grid_origin_transform, parent_frame_name, grid_sizes, default_cell);
+        grid_origin_transform, "grid_frame", grid_sizes, default_cell);
     voxelizer_ = voxelized_geometry_tools::pointcloud_voxelization
                      ::MakePointCloudVoxelizer(voxelizer_option, options);
     display_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(
                        occupancy_display_topic, 1, false);
-    pointclouds_sub_ =
-        nh_.subscribe(pointclouds_topic, 1,
-                      &OccupancyTracker::PointCloudsCallback, this);
+    pointcloud_sub_ =
+        nh_.subscribe(pointcloud_topic, 1,
+                      &OccupancyTracker::PointCloudCallback, this);
   }
 
   void Loop(const double frequency)
@@ -65,49 +64,28 @@ public:
     ROS_INFO_NAMED(ros::this_node::getName(), "Occupancy tracker shut down");
   }
 
-  void PointCloudsCallback(
-      const pointcloud_occupancy_tracking_example::MultiPointCloud2& msg)
+  void PointCloudCallback(const sensor_msgs::PointCloud2& msg)
   {
-    if (msg.pointclouds.size() != msg.camera_poses.size())
-    {
-      ROS_WARN_NAMED(
-          ros::this_node::getName(),
-          "Number of clouds and number of camera poses do not match!");
-      return;
-    }
-    if (msg.header.frame_id != static_environment_.GetFrame())
-    {
-      ROS_WARN_NAMED(
-          ros::this_node::getName(),
-          "Message frame does not match static environment frame");
-      return;
-    }
-    ROS_INFO_NAMED(ros::this_node::getName(), "Got %zu new clouds",
-                   msg.pointclouds.size());
-    std::vector<PointCloudWrapperPtr> clouds;
-    for (size_t idx = 0; idx < msg.pointclouds.size(); idx++)
-    {
-      clouds.push_back(PointCloudWrapperPtr(
-          new PointCloud2Wrapper(
-              &(msg.pointclouds.at(idx)),
-              common_robotics_utilities::conversions
-                  ::GeometryPoseToEigenIsometry3d(msg.camera_poses.at(idx)))));
-    }
+    ROS_INFO_NAMED(ros::this_node::getName(), "Got new cloud");
+    static_environment_.SetFrame(msg.header.frame_id);
+    std::vector<PointCloudWrapperPtr> clouds = {
+        PointCloudWrapperPtr(
+            new PointCloud2Wrapper(&msg, Eigen::Isometry3d::Identity()))};
     const auto voxelized = voxelizer_->VoxelizePointClouds(
         static_environment_, step_size_multiplier_, filter_options_, clouds);
     // Draw
     const std_msgs::ColorRGBA free_color
         = common_robotics_utilities::color_builder
             ::MakeFromFloatColors<std_msgs::ColorRGBA>(
-                0.0, 0.25, 0.0, 0.5);
+                0.0, 0.25, 0.0, 1.0);
     const std_msgs::ColorRGBA filled_color
         = common_robotics_utilities::color_builder
             ::MakeFromFloatColors<std_msgs::ColorRGBA>(
-                0.25, 0.0, 0.0, 0.5);
+                0.25, 0.0, 0.0, 1.0);
     const std_msgs::ColorRGBA unknown_color
         = common_robotics_utilities::color_builder
             ::MakeFromFloatColors<std_msgs::ColorRGBA>(
-                0.0, 0.0, 0.25, 0.5);
+                0.0, 0.0, 0.25, 1.0);
     const auto environment_display =
         voxelized_geometry_tools::ros_interface
             ::ExportForSeparateDisplay(
@@ -117,7 +95,7 @@ public:
 
 private:
   ros::NodeHandle nh_;
-  ros::Subscriber pointclouds_sub_;
+  ros::Subscriber pointcloud_sub_;
   ros::Publisher display_pub_;
   voxelized_geometry_tools::CollisionMap static_environment_;
   double step_size_multiplier_ = 0.5;
@@ -127,7 +105,7 @@ private:
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "pointcloud_occupancy_tracking_node");
+  ros::init(argc, argv, "single_camera_occupancy_tracking_node");
   ros::NodeHandle nh;
   ros::NodeHandle nhp("~");
   // Load parameters
@@ -184,18 +162,15 @@ int main(int argc, char** argv)
   const double z_size = nhp.param(std::string("z_size"), 2.0);
   const common_robotics_utilities::voxel_grid::GridSizes grid_sizes(
     grid_resolution, x_size, y_size, z_size);
-  // Frame name
-  const std::string parent_frame_name =
-      nhp.param(std::string("parent_frame_name"), std::string("world"));
   const double x_origin = nhp.param(std::string("x_origin"), -1.0);
   const double y_origin = nhp.param(std::string("y_origin"), -1.0);
   const double z_origin = nhp.param(std::string("z_origin"), 0.0);
   const Eigen::Isometry3d grid_origin_transform(
       Eigen::Translation3d(x_origin, y_origin, z_origin));
   // Topics
-  const std::string pointclouds_topic =
-      nhp.param(std::string("pointclouds_topic"),
-                std::string("combined_pointclouds"));
+  const std::string pointcloud_topic =
+      nhp.param(std::string("pointcloud_topic"),
+                std::string("pointcloud"));
   const std::string occupancy_display_topic =
       nhp.param(std::string("occupancy_display_topic"),
                 std::string("occupancy_display"));
@@ -203,9 +178,9 @@ int main(int argc, char** argv)
   const double loop_rate = nhp.param(std::string("loop_rate"), 30.0);
   // Start
   OccupancyTracker tracker(
-      nh, grid_sizes, grid_origin_transform, parent_frame_name,
-      step_size_multiplier, filter_options, voxelizer_option, options,
-      pointclouds_topic, occupancy_display_topic);
+      nh, grid_sizes, grid_origin_transform, step_size_multiplier,
+      filter_options, voxelizer_option, options, pointcloud_topic,
+      occupancy_display_topic);
   tracker.Loop(loop_rate);
   return 0;
 }

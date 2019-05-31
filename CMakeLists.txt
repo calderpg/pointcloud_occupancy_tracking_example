@@ -55,7 +55,8 @@ catkin_package(CATKIN_DEPENDS
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(SYSTEM ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS})
+include_directories(include
+                    SYSTEM ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS})
 
 ## Build options
 add_compile_options(-std=c++11)
@@ -69,7 +70,14 @@ add_compile_options(-g)
 add_compile_options(-flto)
 add_compile_options(-Werror=non-virtual-dtor)
 
-# Occupancy tracking node
+# Single-camera occupancy tracking node
+add_executable(single_camera_occupancy_tracking_node
+               src/single_camera_occupancy_tracking_node.cpp)
+add_dependencies(single_camera_occupancy_tracking_node
+                 ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencpp)
+target_link_libraries(single_camera_occupancy_tracking_node ${catkin_LIBRARIES})
+
+# Multi-pointcloud aggregated occupancy tracking node
 add_executable(pointcloud_occupancy_tracking_node
                src/pointcloud_occupancy_tracking_node.cpp)
 add_dependencies(pointcloud_occupancy_tracking_node ${catkin_EXPORTED_TARGETS}
@@ -84,7 +92,11 @@ add_dependencies(pointcloud_aggregator_node ${catkin_EXPORTED_TARGETS}
 target_link_libraries(pointcloud_aggregator_node ${catkin_LIBRARIES})
 
 # Install C++ nodes
-install(TARGETS pointcloud_aggregator_node pointcloud_occupancy_tracking_node
+install(
+    TARGETS
+    pointcloud_aggregator_node
+    pointcloud_occupancy_tracking_node
+    single_camera_occupancy_tracking_node
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
