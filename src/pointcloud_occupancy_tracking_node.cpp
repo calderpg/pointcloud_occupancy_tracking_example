@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <Eigen/Geometry>
-#include <common_robotics_utilities/conversions.hpp>
+#include <common_robotics_utilities/ros_conversions.hpp>
 #include <common_robotics_utilities/color_builder.hpp>
 #include <common_robotics_utilities/math.hpp>
 #include <ros/ros.h>
@@ -90,7 +90,7 @@ public:
       clouds.push_back(PointCloudWrapperPtr(
           new PointCloud2Wrapper(
               &(msg.pointclouds.at(idx)),
-              common_robotics_utilities::conversions
+              common_robotics_utilities::ros_conversions
                   ::GeometryPoseToEigenIsometry3d(msg.camera_poses.at(idx)))));
     }
     const auto voxelized = voxelizer_->VoxelizePointClouds(
@@ -209,4 +209,3 @@ int main(int argc, char** argv)
   tracker.Loop(loop_rate);
   return 0;
 }
-

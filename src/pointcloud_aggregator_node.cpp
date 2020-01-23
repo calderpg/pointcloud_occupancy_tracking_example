@@ -3,6 +3,7 @@
 
 #include <Eigen/Geometry>
 #include <common_robotics_utilities/conversions.hpp>
+#include <common_robotics_utilities/ros_conversions.hpp>
 #include <pointcloud_occupancy_tracking_example/MultiPointCloud2.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -84,10 +85,10 @@ int main(int argc, char** argv)
     {
       combined_pointclouds.pointclouds.push_back(itr->second);
       combined_pointclouds.camera_poses.push_back(
-          common_robotics_utilities::conversions
+          common_robotics_utilities::ros_conversions
               ::EigenIsometry3dToGeometryPose(camera_poses.at(itr->first)));
       camera_transforms.transforms.push_back(
-          common_robotics_utilities::conversions
+          common_robotics_utilities::ros_conversions
               ::EigenIsometry3dToGeometryTransformStamped(
                   camera_poses.at(itr->first), "world", itr->first));
       camera_transforms.transforms.back().header.stamp = now_time;
