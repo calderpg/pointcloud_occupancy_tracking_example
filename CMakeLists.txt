@@ -69,6 +69,8 @@ add_compile_options(-O3)
 add_compile_options(-g)
 add_compile_options(-flto)
 add_compile_options(-Werror=non-virtual-dtor)
+add_compile_options(-Wold-style-cast)
+add_compile_options(-march=native)
 
 # Single-camera occupancy tracking node
 add_executable(single_camera_occupancy_tracking_node
