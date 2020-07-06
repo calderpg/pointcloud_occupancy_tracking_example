@@ -21,6 +21,7 @@ using voxelized_geometry_tools::pointcloud_voxelization
 using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapper;
 using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerOptions;
+using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
 using pointcloud2_wrapper::PointCloud2Wrapper;
 
@@ -72,7 +73,15 @@ public:
         PointCloudWrapperPtr(
             new PointCloud2Wrapper(&msg, Eigen::Isometry3d::Identity()))};
     const auto voxelized = voxelizer_->VoxelizePointClouds(
-        static_environment_, step_size_multiplier_, filter_options_, clouds);
+        static_environment_, step_size_multiplier_, filter_options_, clouds,
+        [] (const VoxelizerRuntime& voxelizer_runtime)
+        {
+          ROS_INFO_NAMED(
+              ros::this_node::getName(),
+              "Raycasting time %f, filtering time %f",
+              voxelizer_runtime.RaycastingTime(),
+              voxelizer_runtime.FilteringTime());
+        });
     // Draw
     const std_msgs::ColorRGBA free_color
         = common_robotics_utilities::color_builder
@@ -184,4 +193,3 @@ int main(int argc, char** argv)
   tracker.Loop(loop_rate);
   return 0;
 }
-
