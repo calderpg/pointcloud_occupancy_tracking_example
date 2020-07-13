@@ -56,14 +56,14 @@ public:
 
   void Loop(const double frequency)
   {
-    ROS_INFO_NAMED(ros::this_node::getName(), "Occupancy tracker running");
+    ROS_INFO("Occupancy tracker running");
     ros::Rate loop_rate(frequency);
     while (ros::ok())
     {
       ros::spinOnce();
       loop_rate.sleep();
     }
-    ROS_INFO_NAMED(ros::this_node::getName(), "Occupancy tracker shut down");
+    ROS_INFO("Occupancy tracker shut down");
   }
 
   void PointCloudsCallback(
@@ -71,20 +71,15 @@ public:
   {
     if (msg.pointclouds.size() != msg.camera_poses.size())
     {
-      ROS_WARN_NAMED(
-          ros::this_node::getName(),
-          "Number of clouds and number of camera poses do not match!");
+      ROS_WARN("Number of clouds and number of camera poses do not match!");
       return;
     }
     if (msg.header.frame_id != static_environment_.GetFrame())
     {
-      ROS_WARN_NAMED(
-          ros::this_node::getName(),
-          "Message frame does not match static environment frame");
+      ROS_WARN("Message frame does not match static environment frame");
       return;
     }
-    ROS_INFO_NAMED(ros::this_node::getName(), "Got %zu new clouds",
-                   msg.pointclouds.size());
+    ROS_INFO("Got %zu new clouds", msg.pointclouds.size());
     std::vector<PointCloudWrapperPtr> clouds;
     for (size_t idx = 0; idx < msg.pointclouds.size(); idx++)
     {
@@ -98,8 +93,7 @@ public:
         static_environment_, step_size_multiplier_, filter_options_, clouds,
         [] (const VoxelizerRuntime& voxelizer_runtime)
         {
-          ROS_INFO_NAMED(
-              ros::this_node::getName(),
+          ROS_INFO(
               "Raycasting time %f, filtering time %f",
               voxelizer_runtime.RaycastingTime(),
               voxelizer_runtime.FilteringTime());
@@ -175,9 +169,8 @@ int main(int argc, char** argv)
   }
   else
   {
-    ROS_FATAL_NAMED(ros::this_node::getName(),
-                    "[%s] is not a valid voxelizer option",
-                    raw_voxelizer_option.c_str());
+    ROS_FATAL(
+        "[%s] is not a valid voxelizer option", raw_voxelizer_option.c_str());
   }
   std::map<std::string, int32_t> options;
   options["CUDA_DEVICE"] = nhp.param(std::string("cuda_device"), 0);
