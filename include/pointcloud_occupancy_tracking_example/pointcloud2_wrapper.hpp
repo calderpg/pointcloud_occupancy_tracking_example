@@ -57,45 +57,29 @@ public:
     return origin_transform_;
   }
 
-  Eigen::Vector4d GetPointLocationDouble(
-      const int64_t point_index) const override
+  void SetPointCloudOriginTransform(
+      const Eigen::Isometry3d& origin_transform) override
   {
-    return GetPointLocationFloat(point_index).cast<double>();
-  }
-
-  Eigen::Vector4f GetPointLocationFloat(
-      const int64_t point_index) const override
-  {
-    Eigen::Vector4f point(0.0f, 0.0f, 0.0f, 1.0f);
-    const size_t starting_offset = GetStartingOffsetForPointXYZ(point_index);
-    memcpy(point.data(), &(cloud_ptr_->data.at(starting_offset)),
-           sizeof(float) * 3);
-    return point;
-  }
-
-  void CopyPointLocationIntoVectorDouble(
-      const int64_t point_index, std::vector<double>& vector,
-      const int64_t vector_index) const override
-  {
-    const Eigen::Vector4f point = GetPointLocationFloat(point_index);
-    vector.at(static_cast<size_t>(vector_index) + 0) =
-        static_cast<double>(point.x());
-    vector.at(static_cast<size_t>(vector_index) + 1) =
-        static_cast<double>(point.y());
-    vector.at(static_cast<size_t>(vector_index) + 2) =
-        static_cast<double>(point.z());
-  }
-
-  void CopyPointLocationIntoVectorFloat(
-      const int64_t point_index, std::vector<float>& vector,
-      const int64_t vector_index) const override
-  {
-    const size_t starting_offset = GetStartingOffsetForPointXYZ(point_index);
-    memcpy(&(vector.at(vector_index)), &(cloud_ptr_->data.at(starting_offset)),
-           sizeof(float) * 3);
+    origin_transform_ = origin_transform;
   }
 
 private:
+  void CopyPointLocationIntoDoublePtrImpl(
+      const int64_t point_index, double* destination) const override
+  {
+    const Eigen::Vector4d point =
+        GetPointLocationVector4f(point_index).cast<double>();
+    std::memcpy(destination, point.data(), sizeof(double) * 3);
+  }
+
+  void CopyPointLocationIntoFloatPtrImpl(
+      const int64_t point_index, float* destination) const override
+  {
+    const size_t starting_offset = GetStartingOffsetForPointXYZ(point_index);
+    std::memcpy(destination, &(cloud_ptr_->data.at(starting_offset)),
+                sizeof(float) * 3);
+  }
+
   size_t GetStartingOffsetForPointXYZ(const int64_t point_index) const
   {
     const size_t starting_offset =
