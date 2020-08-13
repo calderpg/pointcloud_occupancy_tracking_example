@@ -23,6 +23,7 @@ using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
+using pointcloud2_wrapper::OwningPointCloud2Wrapper;
 using pointcloud2_wrapper::PointCloud2Wrapper;
 
 class OccupancyTracker
@@ -65,13 +66,13 @@ public:
     ROS_INFO("Occupancy tracker shut down");
   }
 
-  void PointCloudCallback(const sensor_msgs::PointCloud2& msg)
+  void PointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
   {
     ROS_INFO("Got new cloud");
-    static_environment_.SetFrame(msg.header.frame_id);
+    static_environment_.SetFrame(msg->header.frame_id);
     std::vector<PointCloudWrapperPtr> clouds = {
         PointCloudWrapperPtr(
-            new PointCloud2Wrapper(&msg, Eigen::Isometry3d::Identity()))};
+            new OwningPointCloud2Wrapper(msg, Eigen::Isometry3d::Identity()))};
     const auto voxelized = voxelizer_->VoxelizePointClouds(
         static_environment_, step_size_multiplier_, filter_options_, clouds,
         [] (const VoxelizerRuntime& voxelizer_runtime)

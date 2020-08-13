@@ -24,6 +24,7 @@ using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
+using pointcloud2_wrapper::NonOwningPointCloud2Wrapper;
 using pointcloud2_wrapper::PointCloud2Wrapper;
 
 class OccupancyTracker
@@ -84,7 +85,7 @@ public:
     for (size_t idx = 0; idx < msg.pointclouds.size(); idx++)
     {
       clouds.push_back(PointCloudWrapperPtr(
-          new PointCloud2Wrapper(
+          new NonOwningPointCloud2Wrapper(
               &(msg.pointclouds.at(idx)),
               common_robotics_utilities::ros_conversions
                   ::GeometryPoseToEigenIsometry3d(msg.camera_poses.at(idx)))));

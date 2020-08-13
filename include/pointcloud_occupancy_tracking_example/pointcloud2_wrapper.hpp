@@ -19,6 +19,23 @@ class PointCloud2Wrapper : public PointCloudWrapper
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+  int64_t Size() const override
+  {
+    return static_cast<int64_t>(cloud_ptr_->width * cloud_ptr_->height);
+  }
+
+  const Eigen::Isometry3d& GetPointCloudOriginTransform() const override
+  {
+    return origin_transform_;
+  }
+
+  void SetPointCloudOriginTransform(
+      const Eigen::Isometry3d& origin_transform) override
+  {
+    origin_transform_ = origin_transform;
+  }
+
+protected:
   PointCloud2Wrapper(
       const sensor_msgs::PointCloud2* const cloud_ptr,
       const Eigen::Isometry3d& origin_transform)
@@ -45,22 +62,6 @@ public:
     {
       throw std::runtime_error("PointCloud does not have sequential float xyz");
     }
-  }
-
-  int64_t Size() const override
-  {
-    return static_cast<int64_t>(cloud_ptr_->width * cloud_ptr_->height);
-  }
-
-  const Eigen::Isometry3d& GetPointCloudOriginTransform() const override
-  {
-    return origin_transform_;
-  }
-
-  void SetPointCloudOriginTransform(
-      const Eigen::Isometry3d& origin_transform) override
-  {
-    origin_transform_ = origin_transform;
   }
 
 private:
@@ -92,5 +93,31 @@ private:
   const sensor_msgs::PointCloud2* const cloud_ptr_ = nullptr;
   size_t xyz_offset_from_point_start_ = 0;
   Eigen::Isometry3d origin_transform_ = Eigen::Isometry3d::Identity();
+};
+
+class NonOwningPointCloud2Wrapper : public PointCloud2Wrapper
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  NonOwningPointCloud2Wrapper(
+      const sensor_msgs::PointCloud2* const cloud_ptr,
+      const Eigen::Isometry3d& origin_transform)
+      : PointCloud2Wrapper(cloud_ptr, origin_transform) {}
+};
+
+class OwningPointCloud2Wrapper : public PointCloud2Wrapper
+{
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+  OwningPointCloud2Wrapper(
+      const sensor_msgs::PointCloud2ConstPtr& cloud_ptr,
+      const Eigen::Isometry3d& origin_transform)
+      : PointCloud2Wrapper(cloud_ptr.get(), origin_transform),
+        owned_cloud_ptr_(cloud_ptr) {}
+
+private:
+  sensor_msgs::PointCloud2ConstPtr owned_cloud_ptr_;
 };
 }  // namespace pointcloud2_wrapper
