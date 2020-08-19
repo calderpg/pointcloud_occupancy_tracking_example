@@ -77,10 +77,12 @@ public:
         static_environment_, step_size_multiplier_, filter_options_, clouds,
         [] (const VoxelizerRuntime& voxelizer_runtime)
         {
+          const double raycasting_time = voxelizer_runtime.RaycastingTime();
+          const double filtering_time = voxelizer_runtime.FilteringTime();
           ROS_INFO(
-              "Raycasting time %f, filtering time %f",
-              voxelizer_runtime.RaycastingTime(),
-              voxelizer_runtime.FilteringTime());
+              "Raycasting time %f, filtering time %f, total time %f",
+              raycasting_time, filtering_time,
+              raycasting_time + filtering_time);
         });
     // Draw
     const std_msgs::ColorRGBA free_color
