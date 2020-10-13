@@ -55,8 +55,7 @@ catkin_package(CATKIN_DEPENDS
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include
-                    SYSTEM ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS})
+include_directories(SYSTEM ${catkin_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIRS})
 
 ## Build options
 add_compile_options(-std=c++11)

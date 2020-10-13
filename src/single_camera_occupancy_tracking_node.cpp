@@ -7,11 +7,11 @@
 #include <common_robotics_utilities/color_builder.hpp>
 #include <common_robotics_utilities/math.hpp>
 #include <ros/ros.h>
-#include <pointcloud_occupancy_tracking_example/pointcloud2_wrapper.hpp>
 #include <sensor_msgs/PointCloud2.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <voxelized_geometry_tools/collision_map.hpp>
 #include <voxelized_geometry_tools/pointcloud_voxelization.hpp>
+#include <voxelized_geometry_tools/pointcloud_voxelization_ros_interface.hpp>
 #include <voxelized_geometry_tools/ros_interface.hpp>
 
 using voxelized_geometry_tools::pointcloud_voxelization
@@ -23,8 +23,9 @@ using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
-using pointcloud2_wrapper::OwningPointCloud2Wrapper;
-using pointcloud2_wrapper::PointCloud2Wrapper;
+using voxelized_geometry_tools::pointcloud_voxelization
+    ::OwningPointCloud2Wrapper;
+using voxelized_geometry_tools::pointcloud_voxelization::PointCloud2Wrapper;
 
 class OccupancyTracker
 {
