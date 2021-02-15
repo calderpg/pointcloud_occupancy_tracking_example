@@ -20,7 +20,7 @@ using voxelized_geometry_tools::pointcloud_voxelization
     ::PointCloudVoxelizationInterface;
 using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapper;
 using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
-using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerOptions;
+using voxelized_geometry_tools::pointcloud_voxelization::BackendOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
 using voxelized_geometry_tools::pointcloud_voxelization
@@ -36,7 +36,7 @@ public:
       const Eigen::Isometry3d& grid_origin_transform,
       const double step_size_multiplier,
       const PointCloudVoxelizationFilterOptions& filter_options,
-      const VoxelizerOptions voxelizer_option,
+      const BackendOptions voxelizer_option,
       const std::map<std::string, int32_t>& options,
       const std::string& pointcloud_topic,
       const std::string& occupancy_display_topic)
@@ -137,22 +137,22 @@ int main(int argc, char** argv)
       nhp.param(std::string("step_size_multiplier"), 0.5);
   const std::string raw_voxelizer_option =
       nhp.param(std::string("voxelizer_option"), std::string("best"));
-  VoxelizerOptions voxelizer_option = VoxelizerOptions::BEST_AVAILABLE;
+  BackendOptions voxelizer_option = BackendOptions::BEST_AVAILABLE;
   if (raw_voxelizer_option == "best")
   {
-    voxelizer_option = VoxelizerOptions::BEST_AVAILABLE;
+    voxelizer_option = BackendOptions::BEST_AVAILABLE;
   }
   else if (raw_voxelizer_option == "cpu")
   {
-    voxelizer_option = VoxelizerOptions::CPU;
+    voxelizer_option = BackendOptions::CPU;
   }
   else if (raw_voxelizer_option == "opencl")
   {
-    voxelizer_option = VoxelizerOptions::OPENCL;
+    voxelizer_option = BackendOptions::OPENCL;
   }
   else if (raw_voxelizer_option == "cuda")
   {
-    voxelizer_option = VoxelizerOptions::CUDA;
+    voxelizer_option = BackendOptions::CUDA;
   }
   else
   {
