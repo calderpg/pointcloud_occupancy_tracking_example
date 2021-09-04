@@ -196,8 +196,12 @@ int main(int argc, char** argv)
   const double x_origin = nhp.param(std::string("x_origin"), -1.0);
   const double y_origin = nhp.param(std::string("y_origin"), -1.0);
   const double z_origin = nhp.param(std::string("z_origin"), 0.0);
-  const Eigen::Isometry3d grid_origin_transform(
-      Eigen::Translation3d(x_origin, y_origin, z_origin));
+  const double roll_origin = nhp.param(std::string("roll_origin"), 0.0);
+  const double pitch_origin = nhp.param(std::string("pitch_origin"), 0.0);
+  const double yaw_origin = nhp.param(std::string("yaw_origin"), 0.0);
+  const Eigen::Isometry3d grid_origin_transform =
+      common_robotics_utilities::conversions::TransformFromUrdfXYZRPY(
+          x_origin, y_origin, z_origin, roll_origin, pitch_origin, yaw_origin);
   // Topics
   const std::string pointclouds_topic =
       nhp.param(std::string("pointclouds_topic"),
