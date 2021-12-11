@@ -18,8 +18,8 @@ using voxelized_geometry_tools::pointcloud_voxelization
     ::PointCloudVoxelizationFilterOptions;
 using voxelized_geometry_tools::pointcloud_voxelization
     ::PointCloudVoxelizationInterface;
-using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapper;
-using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
+using voxelized_geometry_tools::pointcloud_voxelization
+    ::PointCloudWrapperSharedPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::BackendOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
@@ -71,8 +71,8 @@ public:
   {
     ROS_INFO("Got new cloud");
     static_environment_.SetFrame(msg->header.frame_id);
-    std::vector<PointCloudWrapperPtr> clouds = {
-        PointCloudWrapperPtr(
+    std::vector<PointCloudWrapperSharedPtr> clouds = {
+        PointCloudWrapperSharedPtr(
             new OwningPointCloud2Wrapper(msg, Eigen::Isometry3d::Identity()))};
     const auto voxelized = voxelizer_->VoxelizePointClouds(
         static_environment_, step_size_multiplier_, filter_options_, clouds,

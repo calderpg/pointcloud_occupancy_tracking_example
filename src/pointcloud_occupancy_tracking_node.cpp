@@ -19,8 +19,8 @@ using voxelized_geometry_tools::pointcloud_voxelization
     ::PointCloudVoxelizationFilterOptions;
 using voxelized_geometry_tools::pointcloud_voxelization
     ::PointCloudVoxelizationInterface;
-using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapper;
-using voxelized_geometry_tools::pointcloud_voxelization::PointCloudWrapperPtr;
+using voxelized_geometry_tools::pointcloud_voxelization
+    ::PointCloudWrapperSharedPtr;
 using voxelized_geometry_tools::pointcloud_voxelization::BackendOptions;
 using voxelized_geometry_tools::pointcloud_voxelization::VoxelizerRuntime;
 
@@ -82,10 +82,10 @@ public:
       return;
     }
     ROS_INFO("Got %zu new clouds", msg.pointclouds.size());
-    std::vector<PointCloudWrapperPtr> clouds;
+    std::vector<PointCloudWrapperSharedPtr> clouds;
     for (size_t idx = 0; idx < msg.pointclouds.size(); idx++)
     {
-      clouds.push_back(PointCloudWrapperPtr(
+      clouds.push_back(PointCloudWrapperSharedPtr(
           new NonOwningPointCloud2Wrapper(
               &(msg.pointclouds.at(idx)),
               common_robotics_utilities::ros_conversions
